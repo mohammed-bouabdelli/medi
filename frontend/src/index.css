@@ -1,0 +1,334 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Medi - Modern Medical Platform 2026 */
+
+@layer base {
+  :root {
+    /* Core - Soft, eye-friendly backgrounds */
+    --background: 220 20% 98%;
+    --foreground: 222 30% 15%;
+
+    /* Cards & Surfaces */
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+
+    /* Primary - Modern Blue */
+    --primary: 217 90% 60%;
+    --primary-foreground: 0 0% 100%;
+    --primary-hover: 217 90% 55%;
+    --primary-light: 217 90% 95%;
+
+    /* Secondary - Warm gray */
+    --secondary: 220 14% 96%;
+    --secondary-foreground: 222 30% 15%;
+
+    /* Muted - Softer text */
+    --muted: 220 14% 96%;
+    --muted-foreground: 220 10% 50%;
+
+    /* Accent - Soft coral/peach */
+    --accent: 12 80% 65%;
+    --accent-foreground: 0 0% 100%;
+
+    /* Success - Soft indigo (changed from green) */
+    --success: 230 55% 55%;
+    --success-foreground: 0 0% 100%;
+    --success-light: 230 55% 95%;
+
+    /* Warning - Soft amber */
+    --warning: 38 90% 55%;
+    --warning-foreground: 222 30% 15%;
+
+    /* Destructive - Soft red */
+    --destructive: 0 70% 55%;
+    --destructive-foreground: 0 0% 100%;
+
+    /* Borders - Very subtle */
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 217 90% 60%;
+
+    /* Modern radius - 2026 style */
+    --radius: 1.25rem;
+    --radius-sm: 1rem;
+    --radius-md: 1.25rem;
+    --radius-lg: 1.5rem;
+    --radius-xl: 2rem;
+    --radius-2xl: 2.5rem;
+    --radius-full: 9999px;
+
+    /* Gradients */
+    --gradient-primary: linear-gradient(
+      135deg,
+      hsl(217, 90%, 60%) 0%,
+      hsl(213, 85%, 55%) 100%
+    );
+    --gradient-hero: linear-gradient(
+      135deg,
+      hsl(210, 40%, 98%) 0%,
+      hsl(217, 90%, 95%) 100%
+    );
+    --gradient-card: linear-gradient(
+      180deg,
+      hsl(0, 0%, 100%) 0%,
+      hsl(210, 40%, 99%) 100%
+    );
+
+    /* Shadows - Disabled for cleaner design */
+    --shadow-sm: none;
+    --shadow-md: none;
+    --shadow-lg: none;
+    --shadow-xl: none;
+    --shadow-glow: none;
+
+    /* Sidebar - Clean minimal */
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 222 30% 15%;
+    --sidebar-primary: 174 60% 45%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 220 14% 97%;
+    --sidebar-accent-foreground: 222 30% 15%;
+    --sidebar-border: 220 13% 93%;
+    --sidebar-ring: 174 60% 45%;
+  }
+
+  .dark {
+    --background: 222 25% 8%;
+    --foreground: 220 15% 95%;
+
+    --card: 222 25% 10%;
+    --card-foreground: 220 15% 95%;
+
+    --popover: 222 25% 10%;
+    --popover-foreground: 220 15% 95%;
+
+    --primary: 174 55% 50%;
+    --primary-foreground: 222 25% 8%;
+
+    --secondary: 222 20% 18%;
+    --secondary-foreground: 220 15% 95%;
+
+    --muted: 222 20% 18%;
+    --muted-foreground: 220 12% 60%;
+
+    --accent: 12 75% 60%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 60% 45%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 222 20% 20%;
+    --input: 222 20% 20%;
+    --ring: 217 90% 60%;
+
+    --sidebar-background: 222 25% 10%;
+    --sidebar-foreground: 220 15% 95%;
+    --sidebar-primary: 217 90% 60%;
+    --sidebar-primary-foreground: 222 25% 8%;
+    --sidebar-accent: 222 20% 18%;
+    --sidebar-accent-foreground: 220 15% 95%;
+    --sidebar-border: 222 20% 20%;
+    --sidebar-ring: 217 90% 60%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family:
+      "Inter",
+      system-ui,
+      -apple-system,
+      sans-serif;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Outfit", system-ui, sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+}
+
+@layer utilities {
+  /* Modern gradient utilities */
+  .gradient-primary {
+    background: linear-gradient(
+      135deg,
+      hsl(217, 90%, 55%) 0%,
+      hsl(213, 85%, 60%) 100%
+    );
+  }
+
+  .gradient-hero {
+    background: linear-gradient(
+      180deg,
+      hsl(220, 20%, 98%) 0%,
+      hsl(217, 90%, 96%) 100%
+    );
+  }
+
+  .gradient-soft {
+    background: linear-gradient(
+      135deg,
+      hsl(217, 90%, 95%) 0%,
+      hsl(220, 20%, 98%) 100%
+    );
+  }
+
+  .gradient-card {
+    background: linear-gradient(
+      180deg,
+      hsl(0, 0%, 100%) 0%,
+      hsl(220, 20%, 99%) 100%
+    );
+  }
+
+  /* Glow effects - Disabled */
+  .shadow-glow {
+    box-shadow: none;
+  }
+
+  .shadow-glow-sm {
+    box-shadow: none;
+  }
+
+  /* Text gradient - Blue theme */
+  .text-gradient {
+    background: linear-gradient(
+      135deg,
+      hsl(217, 90%, 55%) 0%,
+      hsl(213, 85%, 60%) 100%
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Smooth animations */
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .animate-pulse-soft {
+    animation: pulse-soft 3s ease-in-out infinite;
+  }
+
+  .animate-fade-in {
+    animation: fade-in 0.5s ease-out forwards;
+  }
+
+  .animate-slide-up {
+    animation: slide-up 0.5s ease-out forwards;
+  }
+
+  .animate-scale-in {
+    animation: scale-in 0.3s ease-out forwards;
+  }
+
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-8px);
+    }
+  }
+
+  @keyframes pulse-soft {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.8;
+    }
+  }
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes slide-up {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes scale-in {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  /* Hover lift effect - Disabled */
+  .hover-lift {
+    transition: none;
+  }
+
+  .hover-lift:hover {
+    transform: none;
+  }
+
+  /* Glass effect */
+  .glass {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  /* Modern scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: hsl(220 10% 80%);
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(220 10% 70%);
+  }
+}
