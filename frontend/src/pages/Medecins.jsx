@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Search, Star, MapPin, Clock, Stethoscope } from "lucide-react";
+import { Search, MapPin, Stethoscope, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
@@ -16,9 +16,7 @@ import {
 } from "@/components/ui/select";
 import { useQuery } from "@tanstack/react-query";
 import { apiFetch } from "@/lib/api";
-import { Loader2 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
-
 
 const specialties = [
   "Toutes les spécialités",
@@ -49,11 +47,11 @@ const specialties = [
 ];
 
 const Medecins = () => {
+  const { user: currentUser } = useAuth();
   const [searchTerm, setSearchTerm] = useState("");
   const [specialty, setSpecialty] = useState("Toutes les spécialités");
   const navigate = useNavigate();
 
-  // Debounce search slightly for better UX (simplified for this context)
   const searchQuery = searchTerm.trim();
 
   const { data, isLoading } = useQuery({
@@ -74,7 +72,6 @@ const Medecins = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
       <main className="pt-20 pb-16">
-        {/* Hero Search */}
         <section className="gradient-hero py-12">
           <div className="container mx-auto px-4">
             <motion.div
@@ -129,7 +126,6 @@ const Medecins = () => {
           </div>
         </section>
 
-        {/* Results */}
         <section className="container mx-auto px-4 py-12">
           {isLoading ? (
             <div className="flex justify-center items-center py-20">
@@ -182,7 +178,7 @@ const Medecins = () => {
                             size="sm"
                             className="rounded-xl bg-primary hover:bg-primary-hover text-white shadow-lg shadow-primary/20"
                             onClick={() => {
-                              if (user?.role === "patient") {
+                              if (currentUser?.role === "patient") {
                                 navigate(`/doctor/${doctor.id}`);
                               } else {
                                 navigate("/register", {
@@ -193,20 +189,20 @@ const Medecins = () => {
                           >
                             Prendre RDV
                           </Button>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-
-            {!isLoading && filteredDoctors.length === 0 && (
-              <div className="text-center py-12 bg-secondary/50 rounded-2xl">
-                <p className="text-muted-foreground text-lg">Aucun médecin trouvé correspondant à votre recherche.</p>
+                  </motion.div>
+                ))}
               </div>
-            )}
-          </>
-        )}
+
+              {!isLoading && filteredDoctors.length === 0 && (
+                <div className="text-center py-12 bg-secondary/50 rounded-2xl">
+                  <p className="text-muted-foreground text-lg">Aucun médecin trouvé correspondant à votre recherche.</p>
+                </div>
+              )}
+            </>
+          )}
         </section>
       </main>
       <Footer />

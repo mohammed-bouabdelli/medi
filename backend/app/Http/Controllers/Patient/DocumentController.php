@@ -62,11 +62,21 @@ class DocumentController extends Controller
         $document = Document::where('patient_id', $request->user()->id)
             ->findOrFail($id);
 
-        if (!$document->file_path || !\Storage::disk('public')->exists($document->file_path)) {
-            return response()->json(['message' => 'Fichier non trouvé.'], 404);
+        if ($document->file_path && \Storage::disk('public')->exists($document->file_path)) {
+            return \Storage::disk('public')->download($document->file_path, $document->title);
         }
 
-        return \Storage::disk('public')->download($document->file_path, $document->title);
+        // If no file path, generate a text file from content
+        if ($document->content) {
+            $filename = \Str::slug($document->title) . ".txt";
+            return response($document->content)
+                ->withHeaders([
+                    'Content-Type' => 'text/plain',
+                    'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+                ]);
+        }
+
+        return response()->json(['message' => 'Fichier ou contenu non trouvé.'], 404);
     }
 
     /**

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Calendar, Clock, MapPin, X } from "lucide-react";
+import { Calendar, Clock, MapPin, X, FileText, Download } from "lucide-react";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiFetch } from "@/lib/api";
+import { apiFetch, getAuthToken } from "@/lib/api";
 import { useAuth } from "@/context/AuthContext";
 import { Loader2 } from "lucide-react";
 import { format, parseISO } from "date-fns";
@@ -54,6 +54,41 @@ const PatientAppointments = () => {
 
   const handleCancel = (id) => {
     cancelMutation.mutate(id);
+  };
+
+  const handleDownload = async (doc) => {
+    try {
+      const token = getAuthToken();
+      const baseUrl = import.meta.env.VITE_API_URL || "http://localhost:8001/api";
+
+      const response = await fetch(`${baseUrl}/patient/documents/${doc.id}/download`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) throw new Error("Erreur de téléchargement");
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = doc.title || "document";
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+
+      toast({
+        title: "Succès",
+        description: "Téléchargement réussi.",
+      });
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Erreur",
+        description: error.message,
+      });
+    }
   };
 
   const filteredAppointments = filter === "all"
@@ -135,26 +170,45 @@ const PatientAppointments = () => {
                           </span>
                         </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <Badge className={statusConfig[apt.status]?.className || ""}>
-                          {statusConfig[apt.status]?.text || apt.status}
-                        </Badge>
-                        {(apt.status === "confirmed" || apt.status === "pending") && (
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8 text-muted-foreground hover:text-white hover:bg-destructive"
-                            onClick={() => handleCancel(apt.id)}
-                            disabled={cancelMutation.isLoading}
-                          >
-                            <X className="w-4 h-4" />
-                          </Button>
-                        )}
+                        <div className="flex items-center gap-2">
+                          <Badge className={statusConfig[apt.status]?.className || ""}>
+                            {statusConfig[apt.status]?.text || apt.status}
+                          </Badge>
+                          {(apt.status === "confirmed" || apt.status === "pending") && (
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 text-muted-foreground hover:text-white hover:bg-destructive"
+                              onClick={() => handleCancel(apt.id)}
+                              disabled={cancelMutation.isPending}
+                            >
+                              <X className="w-4 h-4" />
+                            </Button>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
+
+                      {/* Documents Section for Completed Appointments */}
+                      {apt.status === "completed" && apt.documents && apt.documents.length > 0 && (
+                        <div className="mt-4 pt-4 border-t border-border flex flex-wrap gap-2">
+                          {apt.documents.map((doc) => (
+                            <Button
+                              key={doc.id}
+                              variant="outline"
+                              size="sm"
+                              className="h-9 px-3 gap-2 rounded-xl text-xs font-medium border-primary/20 hover:bg-primary/5 hover:text-primary transition-all"
+                              onClick={() => handleDownload(doc)}
+                            >
+                              <FileText className="w-3.5 h-3.5" />
+                              {doc.type === 'ordonnance' ? 'Ordonnance' : doc.type === 'certificat' ? 'Certificat Médical' : doc.title}
+                              <Download className="w-3 h-3 ml-1 opacity-50" />
+                            </Button>
+                          ))}
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                </motion.div>
             ))}
           </div>
         </motion.div>

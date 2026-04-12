@@ -32,6 +32,11 @@ Route::prefix('auth')->group(function () {
         Route::get('/user', [AuthController::class, 'user']);
         Route::put('/password', [AuthController::class, 'changePassword']);
         Route::delete('/account', [AuthController::class, 'deleteAccount']);
+
+        // Notifications
+        Route::get('/notifications', [\App\Http\Controllers\NotificationController::class, 'index']);
+        Route::patch('/notifications/{id}/read', [\App\Http\Controllers\NotificationController::class, 'markAsRead']);
+        Route::post('/notifications/mark-all-read', [\App\Http\Controllers\NotificationController::class, 'markAllAsRead']);
     });
 });
 
@@ -72,6 +77,7 @@ Route::prefix('medecin')
         Route::get('/appointments', [Medecin\AppointmentController::class, 'index']);
         Route::patch('/appointments/{id}/confirm', [Medecin\AppointmentController::class, 'confirm']);
         Route::patch('/appointments/{id}/reject', [Medecin\AppointmentController::class, 'reject']);
+        Route::patch('/appointments/{id}/complete', [Medecin\AppointmentController::class, 'complete']);
 
         Route::get('/patients', [Medecin\PatientController::class, 'index']);
         Route::get('/patients/{id}', [Medecin\PatientController::class, 'show']);

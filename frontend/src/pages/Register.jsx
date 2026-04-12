@@ -115,7 +115,13 @@ const Register = () => {
 
       await register(payload);
       toast.success("Inscription réussie");
-      navigate(`/dashboard/${formData.role}`);
+      
+      if (fromDoctor && formData.role === "patient") {
+        const doctorId = location.state?.doctorId;
+        navigate(`/doctor/${doctorId}`);
+      } else {
+        navigate(`/dashboard/${formData.role}`);
+      }
     } catch (error) {
       toast.error(error.message || "Erreur d'inscription");
     } finally {
@@ -462,7 +468,11 @@ const Register = () => {
           <span className="text-muted-foreground">
             Vous avez déjà un compte ?{" "}
           </span>
-          <Link to="/login" className="text-primary font-medium">
+          <Link 
+            to="/login" 
+            state={location.state}
+            className="text-primary font-medium"
+          >
             Se connecter
           </Link>
         </div>

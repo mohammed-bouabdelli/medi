@@ -23,9 +23,16 @@ const Login = () => {
     try {
       const user = await login({ email, password });
       toast.success("Connexion réussie");
-      
-      const from = location.state?.from?.pathname || `/dashboard/${user.role}`;
-      navigate(from, { replace: true });
+
+      const fromDoctor = location.state?.fromDoctor;
+      const doctorId = location.state?.doctorId;
+
+      if (fromDoctor && user.role === "patient") {
+        navigate(`/doctor/${doctorId}`, { replace: true });
+      } else {
+        const from = location.state?.from?.pathname || `/dashboard/${user.role}`;
+        navigate(from, { replace: true });
+      }
     } catch (error) {
       toast.error(error.message || "Erreur de connexion");
     } finally {

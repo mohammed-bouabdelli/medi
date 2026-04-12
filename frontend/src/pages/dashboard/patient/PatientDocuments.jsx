@@ -29,7 +29,7 @@ import {
 } from "@/components/ui/table";
 import { motion } from "framer-motion";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { apiFetch } from "@/lib/api";
+import { apiFetch, getAuthToken } from "@/lib/api";
 import { useAuth } from "@/context/AuthContext";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { format, parseISO } from "date-fns";
@@ -73,7 +73,7 @@ const PatientDocuments = () => {
     try {
       // For downloads, we can't easily use apiFetch with Blob in the current wrapper
       // So we use a direct fetch or a link
-      const token = localStorage.getItem("auth_token");
+      const token = getAuthToken();
       const baseUrl =
         import.meta.env.VITE_API_URL || "http://localhost:8001/api";
 
@@ -121,7 +121,7 @@ const PatientDocuments = () => {
     formData.append("file", selectedFile);
 
     try {
-      const token = localStorage.getItem("auth_token");
+      const token = getAuthToken();
       const baseUrl =
         import.meta.env.VITE_API_URL || "http://localhost:8001/api";
 
@@ -297,12 +297,12 @@ const PatientDocuments = () => {
 
               {viewDoc.file_path ? (
                 <div className="p-4 rounded-xl bg-secondary/50 border border-border text-center">
-                  <p className="text-sm">Fichier attaché (backend en cours).</p>
+                  <p className="text-sm">Fichier attaché (cliquez sur télécharger pour voir).</p>
                 </div>
               ) : (
                 <div className="p-4 rounded-xl bg-secondary/50 border border-border">
-                  <p className="text-sm whitespace-pre-line text-muted-foreground">
-                    Aucun contenu textuel disponible.
+                  <p className="text-sm whitespace-pre-line text-foreground">
+                    {viewDoc.content || "Aucun contenu disponible."}
                   </p>
                 </div>
               )}

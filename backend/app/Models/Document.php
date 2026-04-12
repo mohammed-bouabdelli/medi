@@ -9,7 +9,8 @@ class Document extends Model
     protected $fillable = [
         'patient_id',
         'doctor_id',
-        'name',
+        'appointment_id',
+        'title',
         'type',
         'content',
         'file_path',
@@ -31,5 +32,10 @@ class Document extends Model
     public function doctor()
     {
         return $this->belongsTo(User::class, 'doctor_id');
+    }
+
+    public function appointment()
+    {
+        return $this->belongsTo(Appointment::class);
     }
 }

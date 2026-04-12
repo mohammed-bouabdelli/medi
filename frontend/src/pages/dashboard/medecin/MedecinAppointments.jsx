@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Calendar, Clock, Check, X, User } from "lucide-react";
+import { Calendar, Clock, Check, X, User, ClipboardCheck } from "lucide-react";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -13,6 +13,7 @@ import { useAuth } from "@/context/AuthContext";
 import { Loader2 } from "lucide-react";
 import { format, parseISO } from "date-fns";
 import { fr } from "date-fns/locale";
+import CompleteVisitModal from "@/components/dashboard/medecin/CompleteVisitModal";
 
 const statusMap = {
   pending: { text: "En attente", cls: "bg-warning/10 text-warning" },
@@ -30,6 +31,8 @@ const MedecinAppointments = () => {
     queryKey: ["medecinAppointments"],
     queryFn: () => apiFetch("/medecin/appointments"),
   });
+
+  const [completingApt, setCompletingApt] = useState(null);
 
   const appointments = Array.isArray(appointmentsData) ? appointmentsData : (appointmentsData?.data || []);
 
@@ -162,7 +165,7 @@ const MedecinAppointments = () => {
                             {statusMap[apt.status].text}
                           </span>
 
-                          {apt.status === "pending" && (
+                           {apt.status === "pending" && (
                             <>
                               <Button
                                 size="sm"
@@ -185,6 +188,17 @@ const MedecinAppointments = () => {
                               </Button>
                             </>
                           )}
+
+                          {apt.status === "confirmed" && (
+                            <Button
+                              size="sm"
+                              className="bg-primary hover:bg-primary/90 text-white gap-2"
+                              onClick={() => setCompletingApt(apt)}
+                            >
+                              <ClipboardCheck className="w-4 h-4" />
+                              Terminer
+                            </Button>
+                          )}
                         </div>
                       </div>
                     ))}
@@ -200,6 +214,14 @@ const MedecinAppointments = () => {
             </TabsContent>
           ))}
         </Tabs>
+
+        {completingApt && (
+          <CompleteVisitModal
+            appointment={completingApt}
+            isOpen={!!completingApt}
+            onClose={() => setCompletingApt(null)}
+          />
+        )}
       </motion.div>
     </DashboardLayout>
   );

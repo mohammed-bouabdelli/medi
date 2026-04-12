@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Patient;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreAppointmentRequest;
 use App\Models\Appointment;
+use App\Notifications\NewAppointmentNotification;
+use App\Notifications\AppointmentCancelledNotification;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -16,7 +18,7 @@ class AppointmentController extends Controller
     public function index(Request $request): JsonResponse
     {
         $query = Appointment::forPatient($request->user()->id)
-            ->with(['doctor.doctorProfile']);
+            ->with(['doctor.doctorProfile', 'documents']);
 
         if ($request->filled('status')) {
             $query->where('status', $request->status);
@@ -57,7 +59,10 @@ class AppointmentController extends Controller
             'status' => 'pending',
         ]);
 
-        $appointment->load(['doctor.doctorProfile']);
+        $appointment->load(['doctor.doctorProfile', 'patient']);
+
+        // Notify Doctor
+        $appointment->doctor->notify(new NewAppointmentNotification($appointment));
 
         return response()->json([
             'message' => 'Rendez-vous réservé avec succès.',
@@ -76,6 +81,10 @@ class AppointmentController extends Controller
             ->firstOrFail();
 
         $appointment->update(['status' => 'cancelled']);
+        $appointment->load(['doctor', 'patient']);
+
+        // Notify Doctor
+        $appointment->doctor->notify(new AppointmentCancelledNotification($appointment, 'patient'));
 
         return response()->json([
             'message' => 'Rendez-vous annulé.',

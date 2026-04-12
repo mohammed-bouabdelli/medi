@@ -25,7 +25,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiFetch } from "@/lib/api";
+import { apiFetch, getAuthToken } from "@/lib/api";
 import { useAuth } from "@/context/AuthContext";
 import { Loader2 } from "lucide-react";
 import { format, parseISO } from "date-fns";
@@ -106,7 +106,7 @@ const MedecinPrescriptions = () => {
 
   const handleDownload = async (p) => {
     try {
-      const token = localStorage.getItem("auth_token");
+      const token = getAuthToken();
       const baseUrl =
         import.meta.env.VITE_API_URL || "http://localhost:8001/api";
 

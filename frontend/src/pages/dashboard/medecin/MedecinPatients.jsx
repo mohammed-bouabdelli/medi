@@ -21,14 +21,16 @@ import {
 } from "@/components/ui/dialog";
 
 import { useQuery } from "@tanstack/react-query";
-import { apiFetch } from "@/lib/api";
+import { apiFetch, getAuthToken } from "@/lib/api";
 import { useAuth } from "@/context/AuthContext";
-import { Loader2 } from "lucide-react";
+import { Loader2, ClipboardCheck, Download } from "lucide-react";
+import CompleteVisitModal from "@/components/dashboard/medecin/CompleteVisitModal";
 
 const MedecinPatients = () => {
   const { user } = useAuth();
   const [search, setSearch] = useState("");
   const [viewPatient, setViewPatient] = useState(null);
+  const [completingApt, setCompletingApt] = useState(null);
 
   const { data: patients = [], isLoading } = useQuery({
     queryKey: ["medecinPatients"],
@@ -42,6 +44,32 @@ const MedecinPatients = () => {
     const fullName = `${p.first_name || ""} ${p.last_name || ""}`.toLowerCase();
     return fullName.includes(search.toLowerCase());
   });
+
+  const handleDownloadPrescription = async (prescriptionId) => {
+    try {
+      const token = getAuthToken();
+      const baseUrl = import.meta.env.VITE_API_URL || "http://localhost:8001/api";
+
+      const response = await fetch(`${baseUrl}/medecin/prescriptions/${prescriptionId}/download`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) throw new Error("Erreur de téléchargement");
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `ordonnance-${prescriptionId}.txt`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+       console.error(error);
+    }
+  };
 
   return (
     <DashboardLayout role="medecin" userName={`Dr. ${user?.last_name || "Médecin"}`}>
@@ -117,6 +145,34 @@ const MedecinPatients = () => {
                       >
                         <Eye className="w-4 h-4" />
                       </Button>
+
+                      {p.last_appointment && p.last_appointment.status === 'confirmed' && (
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 text-success hover:bg-success/10"
+                          onClick={() => setCompletingApt(p.last_appointment)}
+                          title="Terminer la visite"
+                        >
+                          <ClipboardCheck className="w-4 h-4" />
+                        </Button>
+                      )}
+                      
+                      {p.last_appointment && p.last_appointment.status === 'completed' && (
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 text-primary hover:bg-primary/10"
+                          onClick={() => {
+                             if (p.last_appointment.prescription) {
+                                handleDownloadPrescription(p.last_appointment.prescription.id);
+                             }
+                          }}
+                          title="Télécharger Ordonnance"
+                        >
+                          <Download className="w-4 h-4" />
+                        </Button>
+                      )}
                     </TableCell>
                   </TableRow>
                 ))}
@@ -124,6 +180,14 @@ const MedecinPatients = () => {
             </Table>
           </CardContent>
         </Card>
+
+        {completingApt && (
+          <CompleteVisitModal
+            appointment={completingApt}
+            isOpen={!!completingApt}
+            onClose={() => setCompletingApt(null)}
+          />
+        )}
       </motion.div>
 
       <Dialog

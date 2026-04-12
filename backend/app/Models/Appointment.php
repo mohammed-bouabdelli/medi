@@ -40,6 +40,11 @@ class Appointment extends Model
         return $this->hasOne(Prescription::class);
     }
 
+    public function documents()
+    {
+        return $this->hasMany(Document::class);
+    }
+
     // ── Scopes ──
 
     public function scopeUpcoming($query)
