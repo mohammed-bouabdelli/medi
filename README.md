@@ -9,7 +9,7 @@ A modern medical platform for the Moroccan market that allows patients to book a
 ### Step 1 - Clone Project
 
 ```bash
-git clone https://github.com/aymanbelarbi/medi.git
+git clone https://github.com/mohammed-bouabdelli/medi.git
 cd medi
 code .
 ```
